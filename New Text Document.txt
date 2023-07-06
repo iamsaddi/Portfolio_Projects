@@ -1,0 +1,262 @@
+SELECT * FROM `seraphic-bliss-382711.covid_19.covid_2019` LIMIT 1000 
+
+
+SELECT * FROM `seraphic-bliss-382711.covid_19.covid_2019` 
+where location = pakistan
+LIMIT 1000
+
+
+SELECT location,date, total_cases,new_cases,total_deaths,population FROM `seraphic-bliss-382711.covid_19.covid_2019` 
+
+
+SELECT location,date total_cases,total_deaths,(total_deaths/total_cases)*100 as Death_Percentage
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+WHERE location like '%states%'
+order by 1,2
+
+
+SELECT location,date ,total_cases,population,(total_cases/population)*100 as Covid_Percentage
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+WHERE location ='Pakistan'
+order by 1,2
+
+
+SELECT location,date ,total_cases,population,CONCAT(CAST((total_cases/population*100) AS STRING), '%')
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+WHERE location ='Pakistan'
+order by 1,2
+
+SELECT 
+location,
+population,
+MAX(total_cases),
+ MAX(FORMAT('%f%%',total_cases/population*100))  as Infection_percentage
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+--WHERE location ='United States'
+GROUP BY location, population
+order by 1,2
+
+
+SELECT 
+location,
+population,
+MAX(total_deaths) as Total_deaths,
+ MAX(FORMAT('%f%%',total_deaths/population*100))  as heighest_deaths
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+--WHERE location ='United States'
+GROUP BY location, population
+order by heighest_deaths DESC
+
+
+SELECT 
+location,
+population,
+MAX(total_deaths) as Total_deaths,
+ MAX(FORMAT('%f%%',total_deaths/population*100))  as heighest_deaths
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+--WHERE location ='United States'
+GROUP BY location, population
+order by heighest_deaths DESC
+
+
+SELECT 
+location,
+population,
+MAX(total_deaths) as Total_deaths,
+ MAX(FORMAT('%f%%',total_deaths/population*100))  as heighest_deaths
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+--WHERE location ='United States'
+GROUP BY location, population
+order by Total_deaths DESC
+
+
+SELECT 
+location,
+MAX(total_deaths) as Total_deaths,
+ --MAX(FORMAT('%f%%',total_deaths/population*100))  as heighest_deaths
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+--WHERE location ='United States'
+where continent is not null
+GROUP BY location
+order by Total_deaths DESC
+
+
+SELECT location, MAX(total_deaths) as Total_death_count
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+WHERE continent is not null
+group by location
+order by Total_death_count DESC
+
+
+SELECT date, SUM(total_cases)--,total_deaths,(total_deaths/total_cases)*100 as Death_Percentage
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+--WHERE location like '%States%'
+group by date
+order by 1,2
+
+
+SELECT date, SUM(new_cases),SUM(new_deaths)--,total_deaths,(total_deaths/total_cases)*100 as Death_Percentage
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+--WHERE location like '%States%'
+group by date
+order by 1,2
+
+
+SELECT  SUM(new_cases),SUM(new_deaths),(SUM(total_deaths)/SUM(total_cases))*100 as Death_Percentage
+FROM `seraphic-bliss-382711.covid_19.covid_2019`  
+--WHERE location like '%States%'
+
+order by 1,2
+
+
+SELECT * 
+FROM `seraphic-bliss-382711.covid_19.covid_2019` dea
+JOIN `seraphic-bliss-382711.covid_19.covid_vacci` vac
+on dea.location = vac.location
+and dea.date = dea.date
+
+
+SELECT dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations,
+SUM(vac.new_vaccinations) OVER (PARTITION BY dea.location)
+FROM `seraphic-bliss-382711.covid_19.covid_2019` dea
+JOIN `seraphic-bliss-382711.covid_19.covid_vacci` vac
+on dea.location = vac.location
+and dea.date = dea.date
+order by 2,3
+
+
+SELECT dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations,
+SUM(vac.new_vaccinations) --OVER (PARTITION BY dea.location order by dea.location,dea.date)
+FROM `seraphic-bliss-382711.covid_19.covid_2019` dea
+JOIN `seraphic-bliss-382711.covid_19.covid_vacci` vac
+on dea.location = vac.location
+and dea.date = dea.date
+where dea.location ='Pakistan'
+order by 2,3
+
+
+
+SELECT dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations,
+SUM(CAST(vac.new_vaccinations as int)) OVER (PARTITION BY dea.location order by dea.location,dea.date)
+FROM `seraphic-bliss-382711.covid_19.covid_2019` dea
+JOIN `seraphic-bliss-382711.covid_19.covid_vacci` vac
+on dea.location = vac.location
+and dea.date = dea.date
+where dea.location ='Pakistan'
+order by 2,3
+
+
+SELECT date, location,  new_vaccinations,
+--SUM(CAST(new_vaccinations as bigint)) OVER (PARTITION BY location order by location,date)
+ FROM `seraphic-bliss-382711.covid_19.covid_vacci` 
+order by 2,3
+
+
+
+SELECT dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations,
+SUM(CAST(vac.new_vaccinations as int)) OVER (PARTITION BY dea.location order by dea.location,dea.date)
+FROM `seraphic-bliss-382711.covid_19.covid_2019` dea
+JOIN `seraphic-bliss-382711.covid_19.covid_vacci` vac
+on dea.location = vac.location
+and dea.date = dea.date
+where dea.continent is not null
+order by 2,3
+
+
+
+SELECT date, location,  new_vaccinations,
+SUM(CAST(new_vaccinations as int)) OVER (PARTITION BY location order by location,date)
+ FROM `seraphic-bliss-382711.covid_19.covid_vacci` 
+where dea.continent is not null
+order by 2,3
+
+
+
+WITH cte_vac(continent,location,date,population,new_vacci,Total_by_loc)
+as
+(
+  SELECT dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations,
+SUM(CAST(vac.new_vaccinations as int)) OVER (PARTITION BY dea.location order by dea.location,dea.date) as Total_by_loc
+FROM `seraphic-bliss-382711.covid_19.covid_2019` dea
+JOIN `seraphic-bliss-382711.covid_19.covid_vacci` vac
+on dea.location = vac.location
+and dea.date = vac.date
+where dea.continent is not null
+--order by 2,3
+)
+
+select * from cte_vac
+
+
+
+
+CREATE TABLE  `seraphic-bliss-382711.covid_19.Vacci_Percentage1`
+(
+  Continent STRING,
+  Location STRING,
+  Date DATE,
+  Population NUMERIC,
+  New_vaccinations NUMERIC,
+  Total_by_loc NUMERIC
+);
+
+
+
+
+
+DROP TABLE IF EXISTS
+CREATE TABLE  `seraphic-bliss-382711.covid_19.Vacci_Percentage`
+(
+  Continent STRING,
+  Location STRING,
+  Date DATE,
+  Population NUMERIC,
+  New_vaccinations NUMERIC,
+  Total_by_loc NUMERIC
+);
+
+
+
+CREATE TABLE #Vacci_Percentage
+(
+Continent nvarchar(255),
+Location nvarchar(255),
+Date datetime,
+Population numeric,
+New_vaccinations numeric,
+Total_by_loc numeric
+)
+insert into #Vacci_Percentage
+
+  SELECT dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations,
+SUM(CAST(vac.new_vaccinations as int)) OVER (PARTITION BY dea.location order by dea.location,dea.date) as Total_by_loc
+FROM `seraphic-bliss-382711.covid_19.covid_2019` dea
+JOIN `seraphic-bliss-382711.covid_19.covid_vacci` vac
+on dea.location = vac.location
+and dea.date = vac.date
+where dea.continent is not null
+--order by 2,3
+
+select * ,(Total_by_loc/population)*100 from Vacci_Percentage
+
+
+
+
+
+
+
+WITH cte_vac AS 
+(
+  SELECT dea.continent,dea.location,dea.date,dea.population,vac.new_vaccinations,
+SUM(CAST(vac.new_vaccinations as int)) OVER (PARTITION BY dea.location order by dea.location,dea.date) as Total_by_loc
+FROM `seraphic-bliss-382711.covid_19.covid_2019` dea
+JOIN `seraphic-bliss-382711.covid_19.covid_vacci` vac
+on dea.location = vac.location
+and dea.date = vac.date
+where dea.continent is not null
+--order by 2,3
+)
+
+select * from cte_vac
+
+
